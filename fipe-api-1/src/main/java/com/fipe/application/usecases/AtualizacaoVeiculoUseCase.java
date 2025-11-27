@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.jboss.logging.Logger;
 
+@ApplicationScoped
 public class AtualizacaoVeiculoUseCase {
 
     private static final Logger LOG = Logger.getLogger(AtualizacaoVeiculoUseCase.class);

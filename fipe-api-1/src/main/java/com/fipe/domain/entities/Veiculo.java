@@ -1,27 +1,53 @@
 package com.fipe.domain.entities;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-public class Veiculo {
+/**
+ * Entidade Veiculo - representa um veículo no banco de dados
+ * Similar a uma classe com [Table] no Entity Framework
+ */
+@Entity
+@Table(name = "veiculos")
+public class Veiculo extends PanacheEntityBase {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String codigo;
+
+    @Column(nullable = false, length = 100)
     private String marca;
+
+    @Column(nullable = false, length = 200)
     private String modelo;
+
+    @Column(length = 500)
     private String observacoes;
+
+    @Column(name = "criado_em", nullable = false)
     private LocalDateTime criadoEm;
+
+    @Column(name = "atualizado_em")
     private LocalDateTime atualizadoEm;
 
+    // Construtor padrão (obrigatório para JPA)
     public Veiculo() {
         this.criadoEm = LocalDateTime.now();
     }
 
-    public Veiculo(Long id, String codigo, String marca, String modelo) {
+    // Construtor com parâmetros
+    public Veiculo(String codigo, String marca, String modelo) {
         this();
         this.codigo = codigo;
         this.marca = marca;
         this.modelo = modelo;
     }
 
+    // Getters e Setters (como Properties em C#)
     public Long getId() {
         return id;
     }

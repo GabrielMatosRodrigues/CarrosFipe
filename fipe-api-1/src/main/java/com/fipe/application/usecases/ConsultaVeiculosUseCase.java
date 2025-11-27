@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
 import java.util.List;
 
+@ApplicationScoped
 public class ConsultaVeiculosUseCase {
 
     private static final Logger LOG = Logger.getLogger(ConsultaVeiculosUseCase.class);
