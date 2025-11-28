@@ -1,35 +1,41 @@
 package com.fipe.infrastructure.messaging;
 
 import com.fipe.application.usecases.ProcessaMarcaUseCase;
-import io.vertx.core.json.JsonObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.smallrye.reactive.messaging.annotations.Blocking;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.jboss.logging.Logger;
 
+import java.nio.charset.StandardCharsets;
+
 @ApplicationScoped
 public class MarcaConsumer {
 
     private static final Logger LOG = Logger.getLogger(MarcaConsumer.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Inject
     ProcessaMarcaUseCase processaMarcaUseCase;
 
     @Incoming("marcas-in")
     @Blocking
-    public void consumirMarca(JsonObject json) {
+    public void consumirMarca(byte[] payload) {
         try {
-            String codigo = json.getString("codigo");
-            String nome = json.getString("nome");
+            String json = new String(payload, StandardCharsets.UTF_8);
 
             LOG.infof("========================================");
-            LOG.infof("MENSAGEM RECEBIDA: %s (%s)", nome, codigo);
+            LOG.infof("MENSAGEM RECEBIDA: %s", json);
             LOG.infof("========================================");
 
-            processaMarcaUseCase.executar(codigo, nome);
+            MarcaMessage message = mapper.readValue(json, MarcaMessage.class);
 
-            LOG.infof("Marca %s processada com sucesso!", nome);
+            LOG.infof("Processando marca: %s (%s)", message.nome(), message.codigo());
+
+            processaMarcaUseCase.executar(message.codigo(), message.nome());
+
+            LOG.infof("Marca %s processada com sucesso!", message.nome());
 
         } catch (Exception e) {
             LOG.errorf(e, "ERRO ao processar mensagem");
